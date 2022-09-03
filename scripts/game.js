@@ -49,15 +49,14 @@ window.addEventListener("load", function () {
 
   // for user to not reach the end from outside the maze
   function dontCheat() {
-    game.addEventListener("mousemove", function (e) {
+    game.addEventListener("mouseleave", function (e) {
       if (gameStatus === "started") {
-        let left = e.offsetX;
-        if (
-          left <= 1 ||
-          (left <= boundaries[3].clientWidth - borderWidth &&
-            left >= boundaries[3].clientWidth - 5)
-        )
-          endGame();
+        document.body.style.background = "rgba(255, 0, 0, 0.4)";
+        alert(
+          "Bad boy what are you trying to do?! Don't exit the game frame while it's running I know your purpose :D",
+        );
+        endGame();
+        changed++;
       }
     });
   }
@@ -107,6 +106,7 @@ window.addEventListener("load", function () {
       boundary.style.borderColor = "black";
     });
     statusText.style.color = "black";
+    document.body.style.background = "initial";
   }
 
   // Scoring system
