@@ -14,6 +14,12 @@ window.addEventListener("load", function () {
   // add start box border and boundary border to detect collision between them not after start box border get inside the boundary
   let borderWidth = 2;
 
+  let score = 0;
+
+  // to avoid selecting S and E characters inside the start and end box
+  start.style.userSelect = "none";
+  end.style.userSelect = "none";
+
   function startGame() {
     // if game is already started do nothing
     if (gameStatus === "started") return;
@@ -82,6 +88,9 @@ window.addEventListener("load", function () {
           top <= boundaries[2].clientHeight + borderWidth
         )
           endGame();
+
+        // check if start reached the end and win the game
+        if (end.offsetLeft <= start.offsetLeft + start.offsetHeight) winGame();
       }
     });
     changePointerEvent("none");
@@ -101,6 +110,21 @@ window.addEventListener("load", function () {
     changePointerEvent("unset");
   }
 
+  function winGame() {
+    if (gameStatus === "winning") return;
+    statusText.textContent = "You won!";
+    gameStatus = "winning";
+    boundaries.forEach(function (boundary) {
+      boundary.style.backgroundColor = "rgba(0, 255, 0, 0.4)";
+      boundary.style.borderColor = "green";
+    });
+    start.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
+    end.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
+    statusText.style.color = "lime";
+
+    changePointerEvent("unset");
+  }
+
   // remove mouse event and interaction with div to avoid glitches and bugs
   function changePointerEvent(_status) {
     start.style.pointerEvents = _status;
@@ -112,6 +136,7 @@ window.addEventListener("load", function () {
     start.style.top = initialTop + "px";
     start.style.left = initialLeft + "px";
     start.style.backgroundColor = "#88ff88";
+    end.style.backgroundColor = "#8888ff";
     boundaries.forEach(function (boundary) {
       boundary.style.backgroundColor = "#eeeeee";
       boundary.style.borderColor = "black";
