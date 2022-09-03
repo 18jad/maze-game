@@ -119,6 +119,18 @@ window.addEventListener("load", function () {
     scoreElement.innerHTML = `<center><h2 style="background-color: rgba(255, 255, 0, 0.7 ); width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${highestScore}</h2></center>`;
   }
 
+  function resetScore() {
+    score = 0;
+    highestScore = 0;
+    updateScore();
+  }
+
+  function resetGame() {
+    resetStart();
+    resetScore();
+  }
+
   updateScore();
   start.onmouseenter = startGame;
+  start.onclick = resetGame;
 });
