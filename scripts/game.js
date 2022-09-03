@@ -1,5 +1,10 @@
 // load the code when all elements on page are ready
 window.addEventListener("load", function () {
+  setTimeout(function () {
+    alert(
+      "- To start the game move your cursor above S box stay inside tha game frame and try to reach the end (E box) without hitting any wall to earn some points. When you lose/win the game move again over the S box and the game will start a new round. \n\n- To reset the game and score press the S box. \n\n\nENJOY! :D",
+    );
+  }, 500);
   const start = document.getElementById("start"),
     boundaries = document.querySelectorAll(".boundary"),
     end = document.getElementById("end"),
