@@ -15,6 +15,10 @@ window.addEventListener("load", function () {
   // used for highliting the boundary that the cursor hit
   let changed = 0;
 
+  // for score system
+  let score = 0,
+    highestScore = 0;
+
   // to avoid selecting S and E characters inside the start and end box
   start.style.userSelect = "none";
   end.style.userSelect = "none";
@@ -28,11 +32,13 @@ window.addEventListener("load", function () {
     resetStart();
   }
 
+  // detect collision between cursor and boundaries
   boundaries.forEach(function (boundary) {
     boundary.style.transition = "background 150ms ease-in-out";
     boundary.addEventListener("mouseenter", function (e) {
       endGame();
       if (gameStatus === "ended" && gameStatus != "started" && changed == 0) {
+        // highlight the collided boundary
         boundary.style.background = "red";
         changed++;
       }
@@ -69,6 +75,11 @@ window.addEventListener("load", function () {
       });
       start.style.backgroundColor = "rgba(255, 0, 0, 0.6)";
       statusText.style.color = "red";
+
+      // score won't be negative and go under 0
+      score = Math.max(0, score - 10);
+
+      updateScore();
     }
   }
 
@@ -83,6 +94,8 @@ window.addEventListener("load", function () {
     start.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
     end.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
     statusText.style.color = "lime";
+    score += 5;
+    updateScore();
   }
 
   // reset start box to it's default position and reset styles
@@ -96,7 +109,16 @@ window.addEventListener("load", function () {
     statusText.style.color = "black";
   }
 
-  start.addEventListener("click", function () {
-    startGame();
-  });
+  // Scoring system
+  var scoreElement = document.createElement("div");
+  document.body.appendChild(scoreElement);
+
+  function updateScore() {
+    // get the max score between current score and last max
+    highestScore = Math.max(highestScore, score);
+    scoreElement.innerHTML = `<center><h2 style="background-color: rgba(255, 255, 0, 0.7 ); width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${highestScore}</h2></center>`;
+  }
+
+  updateScore();
+  start.onmouseenter = startGame;
 });
