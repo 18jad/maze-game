@@ -4,14 +4,12 @@ window.addEventListener("load", function () {
     boundaries = document.querySelectorAll(".boundary"),
     end = document.getElementById("end"),
     statusText = document.getElementById("status"),
-    game = document.getElementById("game"),
-    initialTop = start.offsetTop,
-    initialLeft = start.offsetLeft;
+    game = document.getElementById("game");
 
   // game status to check if game is running or no
   let gameStatus = "ended";
-  console.log(boundaries);
-  // add start box border and boundary border to detect collision between them not after start box border get inside the boundary
+
+  // add boundary border to detect collision between cursor and border not after cursor get inside the boundary
   let borderWidth = 1;
 
   // to avoid selecting S and E characters inside the start and end box
@@ -25,7 +23,6 @@ window.addEventListener("load", function () {
     gameStatus = "started";
     dontCheat();
     resetStart();
-    changePointerEvent("none");
   }
 
   boundaries.forEach(function (boundary) {
@@ -39,7 +36,6 @@ window.addEventListener("load", function () {
     game.addEventListener("mousemove", function (e) {
       if (gameStatus === "started") {
         let left = e.offsetX;
-        let top = e.offsetY;
         if (
           left <= 1 ||
           (left <= boundaries[3].clientWidth - borderWidth &&
@@ -51,6 +47,7 @@ window.addEventListener("load", function () {
   }
 
   function endGame() {
+    // if game is already finished do nothing
     if (gameStatus == "ended") return;
     else if (gameStatus == "started") {
       statusText.textContent = "You lost!";
@@ -61,13 +58,11 @@ window.addEventListener("load", function () {
       });
       start.style.backgroundColor = "rgba(255, 0, 0, 0.6)";
       statusText.style.color = "red";
-
-      changePointerEvent("unset");
     }
   }
 
   function winGame() {
-    if (gameStatus === "winning") return;
+    if (gameStatus == "winning" || gameStatus != "started") return;
     statusText.textContent = "You won!";
     gameStatus = "winning";
     boundaries.forEach(function (boundary) {
@@ -77,20 +72,10 @@ window.addEventListener("load", function () {
     start.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
     end.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
     statusText.style.color = "lime";
-
-    changePointerEvent("unset");
-  }
-
-  // remove mouse event and interaction with div to avoid glitches and bugs
-  function changePointerEvent(_status) {
-    start.style.pointerEvents = _status;
-    end.style.pointerEvents = _status;
   }
 
   // reset start box to it's default position and reset styles
   function resetStart() {
-    start.style.top = initialTop + "px";
-    start.style.left = initialLeft + "px";
     start.style.backgroundColor = "#88ff88";
     end.style.backgroundColor = "#8888ff";
     boundaries.forEach(function (boundary) {
@@ -100,13 +85,5 @@ window.addEventListener("load", function () {
     statusText.style.color = "black";
   }
 
-  start.addEventListener("click", function () {
-    // if start box is not at initial position return it to there in first click then start game with second click otherwise start game from first click
-    if (start.offsetTop == initialTop && start.offsetLeft == initialLeft) {
-      startGame();
-    } else {
-      statusText.textContent = 'Begin by moving your mouse over the "S".';
-      resetStart();
-    }
-  });
+  start.addEventListener("click", startGame);
 });
