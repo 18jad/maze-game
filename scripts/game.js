@@ -69,21 +69,19 @@ function startGame() {
         endGame();
     }
   });
-  removePoinerEvents();
+  changePointerEvent("none");
 }
 
 function endGame() {
   if (gameStatus === "ended") return;
   statusText.innerText = "Game ended";
   gameStatus = "ended";
+  changePointerEvent("unset");
 }
 
-function removePoinerEvents() {
-  start.style.pointerEvents = "none";
-  end.style.pointerEvents = "none";
-  boundaries.forEach(function (boundary) {
-    boundary.style.pointerEvents = "none";
-  });
+function changePointerEvent(_status) {
+  start.style.pointerEvents = _status;
+  end.style.pointerEvents = _status;
 }
 
 start.addEventListener("click", startGame);
