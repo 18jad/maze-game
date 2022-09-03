@@ -116,7 +116,7 @@ window.addEventListener("load", function () {
   function updateScore() {
     // get the max score between current score and last max
     highestScore = Math.max(highestScore, score);
-    scoreElement.innerHTML = `<center><h2 style="background-color: rgba(255, 255, 0, 0.7 ); width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${highestScore}</h2></center>`;
+    scoreElement.innerHTML = `<center><h2 style="background-color: #eeeeee; width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${highestScore}</h2></center>`;
   }
 
   function resetScore() {
