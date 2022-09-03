@@ -23,47 +23,47 @@ window.addEventListener("load", function () {
     if (gameStatus === "started") return;
     statusText.innerText = "Game started";
     gameStatus = "started";
+    dontCheat();
     resetStart();
+    changePointerEvent("none");
+  }
+
+  boundaries.forEach(function (boundary) {
+    boundary.addEventListener("mouseenter", function (e) {
+      endGame();
+    });
+  });
+
+  // for user to not reach the end from outside the maze
+  function dontCheat() {
     game.addEventListener("mousemove", function (e) {
-      // check if game is running and mouse cursor is inside the start box
       if (gameStatus === "started") {
         let left = e.offsetX;
         let top = e.offsetY;
-        console.log(end.offsetLeft, left);
-        // check collision between start box and boundaries
         if (
-          top <= boundaries[1].clientHeight + borderWidth ||
           left <= 1 ||
           (left <= boundaries[3].clientWidth - borderWidth &&
             left >= boundaries[3].clientWidth - 5)
         )
           endGame();
-        if (
-          left <=
-          boundaries[3].clientWidth / 2 -
-            boundaries[4].clientWidth +
-            borderWidth
-        )
-          if (top <= boundaries[0].clientHeight + borderWidth) endGame();
-
-        if (end.offsetLeft <= left && left <= 470) winGame();
       }
     });
-    changePointerEvent("none");
   }
 
   function endGame() {
-    if (gameStatus === "ended") return;
-    statusText.textContent = "You lost!";
-    gameStatus = "ended";
-    boundaries.forEach(function (boundary) {
-      boundary.style.backgroundColor = "rgba(255, 0, 0, 0.4)";
-      boundary.style.borderColor = "rgb(99, 1, 1)";
-    });
-    start.style.backgroundColor = "rgba(255, 0, 0, 0.6)";
-    statusText.style.color = "red";
+    if (gameStatus == "ended") return;
+    else if (gameStatus == "started") {
+      statusText.textContent = "You lost!";
+      gameStatus = "ended";
+      boundaries.forEach(function (boundary) {
+        boundary.style.backgroundColor = "rgba(255, 0, 0, 0.4)";
+        boundary.style.borderColor = "rgb(99, 1, 1)";
+      });
+      start.style.backgroundColor = "rgba(255, 0, 0, 0.6)";
+      statusText.style.color = "red";
 
-    changePointerEvent("unset");
+      changePointerEvent("unset");
+    }
   }
 
   function winGame() {
