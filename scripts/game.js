@@ -12,6 +12,9 @@ window.addEventListener("load", function () {
   // add boundary border to detect collision between cursor and border not after cursor get inside the boundary
   let borderWidth = 1;
 
+  // used for highliting the boundary that the cursor hit
+  let changed = 0;
+
   // to avoid selecting S and E characters inside the start and end box
   start.style.userSelect = "none";
   end.style.userSelect = "none";
@@ -26,8 +29,13 @@ window.addEventListener("load", function () {
   }
 
   boundaries.forEach(function (boundary) {
+    boundary.style.transition = "background 150ms ease-in-out";
     boundary.addEventListener("mouseenter", function (e) {
       endGame();
+      if (gameStatus === "ended" && gameStatus != "started" && changed == 0) {
+        boundary.style.background = "red";
+        changed++;
+      }
     });
   });
 
