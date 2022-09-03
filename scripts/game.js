@@ -10,11 +10,9 @@ window.addEventListener("load", function () {
 
   // game status to check if game is running or no
   let gameStatus = "ended";
-
+  console.log(boundaries);
   // add start box border and boundary border to detect collision between them not after start box border get inside the boundary
-  let borderWidth = 2;
-
-  let score = 0;
+  let borderWidth = 1;
 
   // to avoid selecting S and E characters inside the start and end box
   start.style.userSelect = "none";
@@ -28,69 +26,27 @@ window.addEventListener("load", function () {
     resetStart();
     game.addEventListener("mousemove", function (e) {
       // check if game is running and mouse cursor is inside the start box
-      if (
-        gameStatus === "started" &&
-        e.offsetX >= start.style.left.split("px")[0] &&
-        e.offsetX <= parseFloat(start.style.left.split("px")[0]) + 40 &&
-        e.offsetY >= start.style.top.split("px")[0] &&
-        e.offsetY <= start.style.top.split("px")[0] + 40
-      ) {
-        let left = e.offsetX - 20;
-        let top = e.offsetY - 20;
-        start.style.left = left + "px";
-        start.style.top = top + "px";
-
+      if (gameStatus === "started") {
+        let left = e.offsetX;
+        let top = e.offsetY;
+        console.log(end.offsetLeft, left);
         // check collision between start box and boundaries
+        if (
+          top <= boundaries[1].clientHeight + borderWidth ||
+          left <= 1 ||
+          (left <= boundaries[3].clientWidth - borderWidth &&
+            left >= boundaries[3].clientWidth - 5)
+        )
+          endGame();
         if (
           left <=
           boundaries[3].clientWidth / 2 -
             boundaries[4].clientWidth +
-            borderWidth / 2
-        ) {
+            borderWidth
+        )
           if (top <= boundaries[0].clientHeight + borderWidth) endGame();
-        }
-        if (
-          top - boundaries[0].clientHeight + start.clientHeight >=
-          boundaries[3].clientHeight
-        )
-          endGame();
-        if (
-          top >= boundaries[0].clientHeight / 2 &&
-          left >=
-            boundaries[0].clientWidth / 2.5 +
-              boundaries[1].clientWidth / 2 -
-              borderWidth / 2 &&
-          left <=
-            boundaries[3].clientWidth / 2 +
-              boundaries[4].clientWidth / 2 +
-              borderWidth
-        )
-          endGame();
-        if (top <= boundaries[1].clientHeight + borderWidth) endGame();
-        if (
-          left >=
-            boundaries[0].clientWidth / 2.5 +
-              boundaries[1].clientWidth / 2 -
-              borderWidth / 2 &&
-          left <=
-            boundaries[3].clientWidth / 2 +
-              boundaries[4].clientWidth / 2 +
-              borderWidth &&
-          top >= boundaries[0].clientHeight / 4 + start.clientHeight / 5
-        )
-          endGame();
-        if (
-          left >=
-            boundaries[0].clientWidth +
-              boundaries[1].clientWidth -
-              start.clientWidth -
-              borderWidth &&
-          top <= boundaries[2].clientHeight + borderWidth
-        )
-          endGame();
 
-        // check if start reached the end and win the game
-        if (end.offsetLeft <= start.offsetLeft + start.offsetHeight) winGame();
+        if (end.offsetLeft <= left && left <= 470) winGame();
       }
     });
     changePointerEvent("none");
