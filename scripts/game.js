@@ -14,12 +14,27 @@ function startGame() {
   if (gameStatus === "started") return;
   statusText.innerText = "Game started";
   gameStatus = "started";
+  start.style.top = "205px";
+  start.style.left = "0";
   game.addEventListener("mousemove", function (e) {
-    if (gameStatus === "started") {
+    console.log(
+      e.offsetX,
+      start.style.left.split("px")[0],
+      e.offsetY,
+      start.style.top.split("px")[0],
+    );
+    if (
+      gameStatus === "started" &&
+      e.offsetX >= start.style.left.split("px")[0] &&
+      e.offsetX <= start.style.left.split("px")[0] + 40 &&
+      e.offsetY >= start.style.top.split("px")[0] &&
+      e.offsetY <= start.style.top.split("px")[0] + 40
+    ) {
       let left = e.offsetX - 20;
       let top = e.offsetY - 20;
       start.style.left = left + "px";
       start.style.top = top + "px";
+      console.log(left, top, top - 200 + 40);
       if (
         left <=
         boundaries[3].clientWidth / 2 -
