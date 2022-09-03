@@ -4,7 +4,11 @@ const start = document.getElementById("start"),
   statusText = document.getElementById("status"),
   game = document.getElementById("game");
 
+// game status to check if game is running or no
 let gameStatus = "ended";
+
+// add start box border and boundary border to detect collision between them not after start box border get inside the boundary
+let borderWidth = 2;
 
 function startGame() {
   if (gameStatus === "started") return;
@@ -16,15 +20,53 @@ function startGame() {
       let top = e.offsetY - 20;
       start.style.left = left + "px";
       start.style.top = top + "px";
-      console.log(left, top);
-      if (left <= 152) {
-        if (top <= 202) endGame();
+      if (
+        left <=
+        boundaries[3].clientWidth / 2 -
+          boundaries[4].clientWidth +
+          borderWidth / 2
+      ) {
+        if (top <= boundaries[0].clientHeight + borderWidth) endGame();
       }
-      if (top >= 208) endGame();
-      if (top >= 100 && left >= 158 && left <= 300) endGame();
-      if (top <= 52) endGame();
-      if (left >= 158 && left <= 300 && top >= 58) endGame();
-      if (left >= 306 && top <= 202) endGame();
+      if (
+        top - boundaries[0].clientHeight + start.clientHeight >=
+        boundaries[3].clientHeight
+      )
+        endGame();
+      if (
+        top >= boundaries[0].clientHeight / 2 &&
+        left >=
+          boundaries[0].clientWidth / 2.5 +
+            boundaries[1].clientWidth / 2 -
+            borderWidth / 2 &&
+        left <=
+          boundaries[3].clientWidth / 2 +
+            boundaries[4].clientWidth / 2 +
+            borderWidth
+      )
+        endGame();
+      if (top <= boundaries[1].clientHeight + borderWidth) endGame();
+      if (
+        left >=
+          boundaries[0].clientWidth / 2.5 +
+            boundaries[1].clientWidth / 2 -
+            borderWidth / 2 &&
+        left <=
+          boundaries[3].clientWidth / 2 +
+            boundaries[4].clientWidth / 2 +
+            borderWidth &&
+        top >= boundaries[0].clientHeight / 4 + start.clientHeight / 5
+      )
+        endGame();
+      if (
+        left >=
+          boundaries[0].clientWidth +
+            boundaries[1].clientWidth -
+            start.clientWidth -
+            borderWidth &&
+        top <= boundaries[2].clientHeight + borderWidth
+      )
+        endGame();
     }
   });
   removePoinerEvents();
@@ -36,7 +78,6 @@ function endGame() {
   gameStatus = "ended";
 }
 
-// Remove mouse interact with childs to avoid bugs and glitches
 function removePoinerEvents() {
   start.style.pointerEvents = "none";
   end.style.pointerEvents = "none";
