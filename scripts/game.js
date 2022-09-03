@@ -19,9 +19,8 @@ window.addEventListener("load", function () {
     if (gameStatus === "started") return;
     statusText.innerText = "Game started";
     gameStatus = "started";
-    resetStartPosition();
+    resetStart();
     game.addEventListener("mousemove", function (e) {
-      console.log(e.offsetX, parseFloat(start.style.left.split("px")[0]) + 40);
       // check if game is running and mouse cursor is inside the start box
       if (
         gameStatus === "started" &&
@@ -90,8 +89,15 @@ window.addEventListener("load", function () {
 
   function endGame() {
     if (gameStatus === "ended") return;
-    statusText.innerText = "You lost!";
+    statusText.textContent = "You lost!";
     gameStatus = "ended";
+    boundaries.forEach(function (boundary) {
+      boundary.style.backgroundColor = "rgba(255, 0, 0, 0.4)";
+      boundary.style.borderColor = "rgb(99, 1, 1)";
+    });
+    start.style.backgroundColor = "rgba(255, 0, 0, 0.6)";
+    statusText.style.color = "red";
+
     changePointerEvent("unset");
   }
 
@@ -101,10 +107,16 @@ window.addEventListener("load", function () {
     end.style.pointerEvents = _status;
   }
 
-  // reset start box to it's default position
-  function resetStartPosition() {
+  // reset start box to it's default position and reset styles
+  function resetStart() {
     start.style.top = initialTop + "px";
     start.style.left = initialLeft + "px";
+    start.style.backgroundColor = "#88ff88";
+    boundaries.forEach(function (boundary) {
+      boundary.style.backgroundColor = "#eeeeee";
+      boundary.style.borderColor = "black";
+    });
+    statusText.style.color = "black";
   }
 
   start.addEventListener("click", function () {
@@ -112,7 +124,8 @@ window.addEventListener("load", function () {
     if (start.offsetTop == initialTop && start.offsetLeft == initialLeft) {
       startGame();
     } else {
-      resetStartPosition();
+      statusText.textContent = 'Begin by moving your mouse over the "S".';
+      resetStart();
     }
   });
 });
