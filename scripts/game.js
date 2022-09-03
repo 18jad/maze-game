@@ -7,7 +7,7 @@ window.addEventListener("load", function () {
     game = document.getElementById("game");
 
   // game status to check if game is running or no
-  let gameStatus = "ended";
+  let gameStatus = "idle";
 
   // add boundary border to detect collision between cursor and border not after cursor get inside the boundary
   let borderWidth = 1;
@@ -31,6 +31,8 @@ window.addEventListener("load", function () {
     });
   });
 
+  end.addEventListener("mouseenter", () => winGame());
+
   // for user to not reach the end from outside the maze
   function dontCheat() {
     game.addEventListener("mousemove", function (e) {
@@ -52,8 +54,9 @@ window.addEventListener("load", function () {
     else if (gameStatus == "started") {
       statusText.textContent = "You lost!";
       gameStatus = "ended";
+      changed = 0;
       boundaries.forEach(function (boundary) {
-        boundary.style.backgroundColor = "rgba(255, 0, 0, 0.4)";
+        boundary.style.background = "rgba(255, 0, 0, 0.4)";
         boundary.style.borderColor = "rgb(99, 1, 1)";
       });
       start.style.backgroundColor = "rgba(255, 0, 0, 0.6)";
@@ -85,5 +88,7 @@ window.addEventListener("load", function () {
     statusText.style.color = "black";
   }
 
-  start.addEventListener("click", startGame);
+  start.addEventListener("click", function () {
+    startGame();
+  });
 });
