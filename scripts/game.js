@@ -141,6 +141,22 @@ window.addEventListener("load", function () {
     document.body.style.background = "initial";
   }
 
+  function timer(seconds) {
+    let sec = seconds;
+    const timeLocation = document.querySelector(".example");
+    timeLocation.style.height = "65px";
+    let timer = setInterval(function () {
+      timeLocation.innerHTML = `<h2 style="background: #eeeeee">00:${sec}</h2>`;
+      sec--;
+      if (sec < 0) {
+        clearInterval(timer);
+        endGame();
+      }
+    }, 1000);
+  }
+
+  timer(60);
+
   // Scoring system
   var scoreElement = document.createElement("div");
   document.body.appendChild(scoreElement);
