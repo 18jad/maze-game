@@ -23,6 +23,12 @@ window.addEventListener("load", function () {
   let score = 0,
     highestScore = 0;
 
+  let timeLeft = 60,
+    timerRunning,
+    timeLeftLabel;
+
+  let round = 1;
+
   // to avoid selecting S and E characters inside the start and end box
   start.style.userSelect = "none";
   end.style.userSelect = "none";
@@ -55,8 +61,15 @@ window.addEventListener("load", function () {
     if (gameStatus === "started") return;
     statusText.innerText = "Game started";
     gameStatus = "started";
-    dontCheat();
+
     resetStart();
+    dontCheat();
+    timeLeft = Math.max(
+      5,
+      60 - (parseInt(localStorage.getItem(username)?.round) || round) * 7,
+    );
+    timer(round == 1 ? 60 : timeLeft);
+    console.log(timeLeft);
   }
 
   // detect collision between cursor and boundaries
@@ -104,9 +117,18 @@ window.addEventListener("load", function () {
 
       // score won't be negative and go under 0
       score = Math.max(0, score - 10);
-
+      round = Math.max(1, round - 1);
       // set username score
-      localStorage.setItem(username, score);
+      localStorage.setItem(
+        username,
+        JSON.stringify({ score: score, round: round }),
+      );
+      clearInterval(timerRunning);
+      timeLeftLabel = Math.max(
+        5,
+        60 - (parseInt(localStorage.getItem(username)?.round) || round) * 7,
+      );
+      timer(round == 1 ? 60 : timeLeftLabel);
       updateScore();
     }
   }
@@ -123,13 +145,23 @@ window.addEventListener("load", function () {
     end.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
     statusText.style.color = "lime";
     score += 5;
-
+    round++;
     // set username score
-    localStorage.setItem(username, score);
+    localStorage.setItem(
+      username,
+      JSON.stringify({ score: score, round: round }),
+    );
+    clearInterval(timerRunning);
+    timeLeftLabel = Math.max(
+      5,
+      60 - (parseInt(localStorage.getItem(username)?.round) || round) * 7,
+    );
+
+    timer(round == 1 ? 60 : timeLeftLabel);
     updateScore();
   }
 
-  // reset start box to it's default position and reset styles
+  // reset styles
   function resetStart() {
     start.style.backgroundColor = "#88ff88";
     end.style.backgroundColor = "#8888ff";
@@ -145,18 +177,25 @@ window.addEventListener("load", function () {
     let sec = seconds;
     const timeLocation = document.querySelector(".example");
     timeLocation.style.height = "65px";
-    let timer = setInterval(function () {
-      timeLocation.innerHTML = `<h2 style="background: #eeeeee">00:${sec}</h2>`;
-      sec--;
+    timerRunning = setInterval(function () {
+      timeLocation.innerHTML = `<h2 style="background: #eeeeee; transition: transform 150ms ease-in-out;">00:${sec}</h2>`;
+      if (gameStatus == "started") {
+        sec--;
+      } else {
+        clearInterval(timerRunning);
+      }
       if (sec < 0) {
-        clearInterval(timer);
+        clearInterval(timerRunning);
         endGame();
+        changed++;
+        timeLocation.style.transform = "scale(1.05)";
+        setTimeout(() => {
+          timeLocation.style.transform = "scale(1)";
+        }, 500);
       }
     }, 1000);
   }
-
-  timer(60);
-
+  timer(timeLeft);
   // Scoring system
   var scoreElement = document.createElement("div");
   document.body.appendChild(scoreElement);
@@ -174,7 +213,9 @@ window.addEventListener("load", function () {
     optionalScore == null ? null : (score = optionalScore);
     scoreElement.innerHTML = `<center><h2 style="background-color: #eeeeee; width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${localStorage.getItem(
       "highestScore",
-    )}</h2></center>`;
+    )} <br /> Round: ${
+      localStorage.getItem(username)?.round || round
+    }</h2></center>`;
   }
 
   function resetScore() {
@@ -203,7 +244,7 @@ window.addEventListener("load", function () {
 
   // update score if user already existed
   if (localStorage.getItem(username)) {
-    updateScore(parseInt(localStorage.getItem(username)));
+    updateScore(parseInt(localStorage.getItem(username).score));
   }
   if (localStorage.getItem("highestScore")) {
     updateScore();
