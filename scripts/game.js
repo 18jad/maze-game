@@ -2,11 +2,9 @@
 window.addEventListener("load", function () {
   let username;
   getUsername();
-  setTimeout(function () {
-    alert(
-      `Hey ${username}! \n\n- To start the game move your cursor above S box stay inside tha game frame and try to reach the end (E box) without hitting any wall to earn some points. When you lose/win the game move again over the S box and the game will start a new round. \n\n- To reset the game and score press the S box. \n\n\nENJOY! :D`,
-    );
-  }, 500);
+  alert(
+    `Hey ${username}! \n\n- To start the game move your cursor above S box stay inside tha game frame and try to reach the end (E box) without hitting any wall and before times run out to earn some points. When you lose/win the game move again over the S box and the game will start a new round. \n\n- To reset the game and score press the S box. \n\n- Each win take you to next round where time is shrinked. \n\n\nENJOY AND TRY TO BEAT HIGHSCORES! :D`,
+  );
   const start = document.getElementById("start"),
     boundaries = document.querySelectorAll(".boundary"),
     end = document.getElementById("end"),
@@ -23,11 +21,20 @@ window.addEventListener("load", function () {
   let score = 0,
     highestScore = 0;
 
-  let timeLeft = 60,
+  let timeLeft =
+      parseInt(JSON.parse(localStorage.getItem(username)).round) > 1
+        ? Math.max(
+            5,
+            60 -
+              (parseInt(JSON.parse(localStorage.getItem(username)).round) ||
+                round) *
+                7,
+          )
+        : 60,
     timerRunning,
     timeLeftLabel;
 
-  let round = 1;
+  let round = parseInt(JSON.parse(localStorage.getItem(username)).round) || 1;
 
   // to avoid selecting S and E characters inside the start and end box
   start.style.userSelect = "none";
@@ -61,12 +68,13 @@ window.addEventListener("load", function () {
     if (gameStatus === "started") return;
     statusText.innerText = "Game started";
     gameStatus = "started";
-
     resetStart();
     dontCheat();
     timeLeft = Math.max(
       5,
-      60 - (parseInt(localStorage.getItem(username)?.round) || round) * 7,
+      60 -
+        (parseInt(JSON.parse(localStorage.getItem(username)).round) || round) *
+          7,
     );
     timer(round == 1 ? 60 : timeLeft);
     console.log(timeLeft);
@@ -126,7 +134,10 @@ window.addEventListener("load", function () {
       clearInterval(timerRunning);
       timeLeftLabel = Math.max(
         5,
-        60 - (parseInt(localStorage.getItem(username)?.round) || round) * 7,
+        60 -
+          (parseInt(JSON.parse(localStorage.getItem(username)).round) ||
+            round) *
+            7,
       );
       timer(round == 1 ? 60 : timeLeftLabel);
       updateScore();
@@ -154,7 +165,9 @@ window.addEventListener("load", function () {
     clearInterval(timerRunning);
     timeLeftLabel = Math.max(
       5,
-      60 - (parseInt(localStorage.getItem(username)?.round) || round) * 7,
+      60 -
+        (parseInt(JSON.parse(localStorage.getItem(username)).round) || round) *
+          7,
     );
 
     timer(round == 1 ? 60 : timeLeftLabel);
@@ -214,7 +227,7 @@ window.addEventListener("load", function () {
     scoreElement.innerHTML = `<center><h2 style="background-color: #eeeeee; width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${localStorage.getItem(
       "highestScore",
     )} <br /> Round: ${
-      localStorage.getItem(username)?.round || round
+      JSON.parse(localStorage.getItem(username)).round || round
     }</h2></center>`;
   }
 
@@ -244,7 +257,7 @@ window.addEventListener("load", function () {
 
   // update score if user already existed
   if (localStorage.getItem(username)) {
-    updateScore(parseInt(localStorage.getItem(username).score));
+    updateScore(parseInt(JSON.parse(localStorage.getItem(username)).score));
   }
   if (localStorage.getItem("highestScore")) {
     updateScore();
