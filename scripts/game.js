@@ -16,9 +16,6 @@ window.addEventListener("load", function () {
   // game status to check if game is running or no
   let gameStatus = "idle";
 
-  // add boundary border to detect collision between cursor and border not after cursor get inside the boundary
-  let borderWidth = 1;
-
   // used for highliting the boundary that the cursor hit
   let changed = 0;
 
@@ -32,7 +29,25 @@ window.addEventListener("load", function () {
 
   function getUsername() {
     let temp = prompt("Enter your username: ");
+    if (temp == null || temp == undefined || temp == "") getUsername();
     username = temp;
+    if (username != null || username != undefined || username != "") {
+      if (localStorage.getItem("users")) {
+        let usernames = jsonToArray(localStorage.getItem("users"));
+        // if user already exists in localStorage array do nothing
+        if (checkUser(username, usernames)) return;
+        usernames.push(username);
+        localStorage.setItem("users", JSON.stringify(usernames));
+      } else {
+        localStorage.setItem("users", JSON.stringify([username]));
+      }
+    }
+  }
+
+  function checkUser(username, users) {
+    for (let i = 0; i < users.length; i++) {
+      if (username == users[i]) return true;
+    }
   }
 
   function startGame() {
@@ -90,6 +105,8 @@ window.addEventListener("load", function () {
       // score won't be negative and go under 0
       score = Math.max(0, score - 10);
 
+      // set username score
+      localStorage.setItem(username, score);
       updateScore();
     }
   }
@@ -106,6 +123,9 @@ window.addEventListener("load", function () {
     end.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
     statusText.style.color = "lime";
     score += 5;
+
+    // set username score
+    localStorage.setItem(username, score);
     updateScore();
   }
 
@@ -125,15 +145,27 @@ window.addEventListener("load", function () {
   var scoreElement = document.createElement("div");
   document.body.appendChild(scoreElement);
 
-  function updateScore() {
+  function updateScore(optionalScore = null) {
     // get the max score between current score and last max
     highestScore = Math.max(highestScore, score);
-    scoreElement.innerHTML = `<center><h2 style="background-color: #eeeeee; width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${highestScore}</h2></center>`;
+    if (localStorage.getItem("highestScore")) {
+      if (localStorage.getItem("highestScore") < score) {
+        localStorage.setItem("highestScore", score);
+      }
+    } else {
+      localStorage.setItem("highestScore", highestScore);
+    }
+    optionalScore == null ? null : (score = optionalScore);
+    scoreElement.innerHTML = `<center><h2 style="background-color: #eeeeee; width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${localStorage.getItem(
+      "highestScore",
+    )}</h2></center>`;
   }
 
   function resetScore() {
     score = 0;
     highestScore = 0;
+    // reset username score
+    localStorage.setItem(username, 0);
     updateScore();
   }
 
@@ -142,7 +174,22 @@ window.addEventListener("load", function () {
     resetScore();
   }
 
+  function jsonToArray(JS_Obj) {
+    var obj = JSON.parse(JS_Obj);
+    var res = [];
+    for (var i in obj) res.push(obj[i]);
+    return res;
+  }
+
   updateScore();
   start.onmouseenter = startGame;
   start.onclick = resetGame;
+
+  // update score if user already existed
+  if (localStorage.getItem(username)) {
+    updateScore(parseInt(localStorage.getItem(username)));
+  }
+  if (localStorage.getItem("highestScore")) {
+    updateScore();
+  }
 });
