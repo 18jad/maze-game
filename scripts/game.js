@@ -21,8 +21,14 @@ window.addEventListener("load", function () {
   let score = 0,
     highestScore = 0;
 
+  let round = localStorage.getItem(username)
+    ? parseInt(JSON.parse(localStorage.getItem(username)).round)
+    : 1;
+
   let timeLeft =
-      parseInt(JSON.parse(localStorage.getItem(username)).round) > 1
+      (localStorage.getItem(username)
+        ? parseInt(JSON.parse(localStorage.getItem(username)).round)
+        : round) > 1
         ? Math.max(
             5,
             60 -
@@ -33,8 +39,6 @@ window.addEventListener("load", function () {
         : 60,
     timerRunning,
     timeLeftLabel;
-
-  let round = parseInt(JSON.parse(localStorage.getItem(username)).round) || 1;
 
   // to avoid selecting S and E characters inside the start and end box
   start.style.userSelect = "none";
@@ -73,7 +77,9 @@ window.addEventListener("load", function () {
     timeLeft = Math.max(
       5,
       60 -
-        (parseInt(JSON.parse(localStorage.getItem(username)).round) || round) *
+        (localStorage.getItem(username)
+          ? parseInt(JSON.parse(localStorage.getItem(username)).round)
+          : round) *
           7,
     );
     timer(round == 1 ? 60 : timeLeft);
@@ -227,7 +233,9 @@ window.addEventListener("load", function () {
     scoreElement.innerHTML = `<center><h2 style="background-color: #eeeeee; width: fit-content; padding: 20px; border-radius: 10px; border: 1px solid black;">Score: ${score} <br />Highest Score: ${localStorage.getItem(
       "highestScore",
     )} <br /> Round: ${
-      JSON.parse(localStorage.getItem(username)).round || round
+      localStorage.getItem(username)
+        ? parseInt(JSON.parse(localStorage.getItem(username)).round)
+        : round
     }</h2></center>`;
   }
 
